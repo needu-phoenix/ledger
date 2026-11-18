@@ -25,7 +25,7 @@ async fn main() -> anyhow::Result<()> {
         .run(&state.pool)
         .await
         .context("failed to apply database migrations")?;
-    
+
     info!("migrations applied");
 
     let app = router(state);

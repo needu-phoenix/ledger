@@ -1,8 +1,8 @@
-use std::time::Duration;
-
 use crate::{config::Config, http::handlers};
+use anyhow::Context;
 use axum::{Router, routing::get};
 use sqlx::{PgPool, postgres::PgPoolOptions};
+use std::time::Duration;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -14,7 +14,8 @@ impl AppState {
         let pool = PgPoolOptions::new()
             .acquire_timeout(Duration::from_secs(3))
             .connect(&config.database_url)
-            .await?;
+            .await
+            .context("Could not connect to Postgres: is it running and is DATABASE_URL correct")?;
         Ok(AppState { pool })
     }
 }

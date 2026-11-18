@@ -20,6 +20,9 @@ async fn main() -> anyhow::Result<()> {
 
     let state = AppState::new(&config).await?;
 
+    sqlx::migrate!().run(&state.pool).await?;
+    info!("migrations applied");
+
     let app = router(state);
     let listener = TcpListener::bind(config.bind_addr).await?;
     info!("Server is listening on {}", config.bind_addr);

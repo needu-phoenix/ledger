@@ -1,3 +1,4 @@
+use anyhow::Context;
 use ledger::{
     config::Config,
     http::routes::{AppState, router},
@@ -20,7 +21,11 @@ async fn main() -> anyhow::Result<()> {
 
     let state = AppState::new(&config).await?;
 
-    sqlx::migrate!().run(&state.pool).await?;
+    sqlx::migrate!()
+        .run(&state.pool)
+        .await
+        .context("failed to apply database migrations")?;
+    
     info!("migrations applied");
 
     let app = router(state);

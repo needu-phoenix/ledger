@@ -1,9 +1,8 @@
--- Add migration script here
 CREATE TABLE accounts (
     id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name            TEXT        NOT NULL,
     currency        CHAR(3)     NOT NULL DEFAULT 'GBP',
-    allow_negative  BOOLEAN     NOT NULL DEFAULT false,  -- only systems accounts may go below zero
+    allow_negative  BOOLEAN     NOT NULL DEFAULT false,  -- only system accounts may go below zero
     created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

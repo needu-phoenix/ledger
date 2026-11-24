@@ -1,7 +1,8 @@
 use anyhow::Context;
 use ledger::{
     config::Config,
-    http::routes::{AppState, router},
+    db,
+    http::{AppState, routes::router},
 };
 use tokio::net::TcpListener;
 use tracing::info;
@@ -19,15 +20,16 @@ async fn main() -> anyhow::Result<()> {
 
     let config = Config::from_env()?;
 
-    let state = AppState::new(&config).await?;
+    let pool = db::connect(&config).await?;
 
     sqlx::migrate!()
-        .run(&state.pool)
+        .run(&pool)
         .await
         .context("failed to apply database migrations")?;
 
     info!("migrations applied");
 
+    let state = AppState { pool };
     let app = router(state);
     let listener = TcpListener::bind(config.bind_addr).await?;
     info!("Server is listening on {}", config.bind_addr);

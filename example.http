@@ -2,3 +2,29 @@
 
 ###
 GET {{base}}/health
+
+###
+POST {{base}}/accounts
+Content-Type: application/json
+
+{
+    "name": "Chinedu"
+}
+
+###
+POST {{base}}/accounts
+Content-Type: application/json
+
+{
+    "name": "Alice",
+    "currncy": "USD"
+}
+
+###
+POST {{base}}/accounts
+Content-Type: application/json
+
+{
+    "name": "Maya",
+    "currency": "USD"
+}

@@ -1,10 +1,7 @@
-use crate::{accounts::handlers, health};
+use crate::accounts::routes;
+use crate::health::health;
+use axum::{Router, routing::get};
 use sqlx::PgPool;
-
-use axum::{
-    Router,
-    routing::{get, post},
-};
 
 #[derive(Clone)]
 pub struct AppState {
@@ -13,7 +10,7 @@ pub struct AppState {
 
 pub fn router(state: AppState) -> Router {
     Router::new()
-        .route("/health", get(health::health))
-        .route("/accounts", post(handlers::create_account))
+        .route("/health", get(health))
+        .nest("/accounts", routes::routes())
         .with_state(state)
 }

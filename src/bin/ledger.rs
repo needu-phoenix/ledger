@@ -1,11 +1,12 @@
 use anyhow::Context;
 use ledger::{
+    app::{self, AppState},
     config::Config,
     db,
-    http::{AppState, routes::router},
 };
-use tokio::net::TcpListener;
 use tracing::info;
+
+use tokio::net::TcpListener;
 use tracing_subscriber::EnvFilter;
 
 #[tokio::main]
@@ -30,7 +31,7 @@ async fn main() -> anyhow::Result<()> {
     info!("migrations applied");
 
     let state = AppState { pool };
-    let app = router(state);
+    let app = app::router(state);
     let listener = TcpListener::bind(config.bind_addr).await?;
     info!("Server is listening on {}", config.bind_addr);
     axum::serve(listener, app).await?;

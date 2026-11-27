@@ -87,13 +87,10 @@ mod tests {
     }
 
     #[test]
-    fn accept_valid_currencies() {
+    fn accepts_and_uppercases_valid_currencies() {
         for good in ["GBP", "gbp", "AUD", "ngn", "USD", "eur"] {
-            let _val = good.to_ascii_uppercase();
-            assert!(
-                matches!(Currency::parse(good), Ok(Currency(_val))),
-                "expected {good:?} to be accepted"
-            );
+            let c = Currency::parse(good).unwrap();
+            assert_eq!(c.as_str(), good.to_ascii_uppercase(), "for input {good:?}");
         }
     }
     #[test]

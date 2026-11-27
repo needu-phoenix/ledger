@@ -12,10 +12,10 @@ pub enum AccountError {
     #[error("account name must not be empty")]
     EmptyName,
 
-    #[error("account name must be {MAX_NAME_LEN} or less")]
+    #[error("account name must be at most {MAX_NAME_LEN} charcaters")]
     NameTooLong,
 
-    #[error("currency must be 3 uppercase letters, got {0:?}")]
+    #[error("currency must be 3 letters, got {0:?}")]
     InvalidCurrency(String),
 
     #[error("database error: {0}")]

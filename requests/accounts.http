@@ -13,10 +13,25 @@ Content-Type: application/json
 
 {"name": " "}
 
+
 ### Create account: missing Content-Type header
 POST {{base}}/accounts
 
 {"name": "Alice"}
+
+
+### Create account: valid name and currency
+POST {{base}}/accounts
+Content-Type: application/json
+
+{"name": "Sam", "currency": "gbp"}
+
+
+### Create account: invalid, currency length < 3
+POST {{base}}/accounts
+Content-Type: application/json
+
+{"name": "Sam", "currency": "AB"}
 
 ### Create account: invalid, currency length > 3
 POST {{base}}/accounts
@@ -24,17 +39,20 @@ Content-Type: application/json
 
 {"name":"Bob","currency":"USDX"}
 
+
 ### Create account: invalid, currency contains numbers
 POST {{base}}/accounts
 Content-Type: application/json
 
 {"name":"Bob","currency":"U2D"}
 
+
 ### Create account: invalid name, lenght > 100
 POST {{base}}/accounts
 Content-Type: application/json
 
 {"name":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
+
 
 ### Create account: broken JSON
 POST {{base}}/accounts

@@ -73,7 +73,7 @@ mod tests {
     #[test]
     fn trims_surrounding_whitespace() {
         let name = AccountName::parse(" Alice ").unwrap();
-        assert!(matches!(name.as_str(), "Alice"))
+        assert_eq!(name.as_str(), "Alice")
     }
 
     #[test]
@@ -84,5 +84,24 @@ mod tests {
                 "expected {bad:?} to be rejected"
             );
         }
+    }
+
+    #[test]
+    fn accept_valid_currencies() {
+        for good in ["GBP", "gbp", "AUD", "ngn", "USD", "eur"] {
+            let _val = good.to_ascii_uppercase();
+            assert!(
+                matches!(Currency::parse(good), Ok(Currency(_val))),
+                "expected {good:?} to be accepted"
+            );
+        }
+    }
+    #[test]
+    fn name_length_boundary() {
+        assert!(AccountName::parse(&"x".repeat(100)).is_ok());
+        assert!(matches!(
+            AccountName::parse(&"x".repeat(101)),
+            Err(AccountError::NameTooLong)
+        ));
     }
 }

@@ -1,11 +1,14 @@
-use super::model::{Account, AccountName, Currency};
+use super::{
+    error::AccountError,
+    model::{Account, AccountName, Currency},
+};
 use sqlx::PgPool;
 
 pub async fn create(
     pool: &PgPool,
     name: &AccountName,
     currency: &Currency,
-) -> Result<Account, sqlx::Error> {
+) -> Result<Account, AccountError> {
     let account = sqlx::query_as!(
         Account,
         r#"

@@ -7,6 +7,12 @@ Content-Type: application/json
 
 {"name": "Alice"}
 
+### Create Account: invalid, name cannot be empty
+POST {{base}}/accounts
+Content-Type: application/json
+
+{"name": " "}
+
 ### Create account: missing Content-Type header
 POST {{base}}/accounts
 
@@ -17,6 +23,18 @@ POST {{base}}/accounts
 Content-Type: application/json
 
 {"name":"Bob","currency":"USDX"}
+
+### Create account: invalid, currency contains numbers
+POST {{base}}/accounts
+Content-Type: application/json
+
+{"name":"Bob","currency":"U2D"}
+
+### Create account: invalid name, lenght > 100
+POST {{base}}/accounts
+Content-Type: application/json
+
+{"name":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
 
 ### Create account: broken JSON
 POST {{base}}/accounts

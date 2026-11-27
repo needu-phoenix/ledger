@@ -1,16 +1,20 @@
-use super::model::Account;
-use sqlx::{self, postgres::PgPool};
+use super::model::{Account, AccountName, Currency};
+use sqlx::PgPool;
 
-pub async fn create(pool: &PgPool, name: &str, currency: &str) -> Result<Account, sqlx::Error> {
+pub async fn create(
+    pool: &PgPool,
+    name: &AccountName,
+    currency: &Currency,
+) -> Result<Account, sqlx::Error> {
     let account = sqlx::query_as!(
         Account,
         r#"
         INSERT INTO accounts (name, currency)
         VALUES ($1, $2)
-        RETURNING *
+        RETURNING id, name, currency, allow_negative, created_at
         "#,
-        name,
-        currency
+        name.as_str(),
+        currency.as_str()
     )
     .fetch_one(pool)
     .await?;

@@ -3,6 +3,7 @@ use chrono::{DateTime, Utc};
 use serde::Serialize;
 
 pub const MAX_NAME_LEN: usize = 100;
+pub const SUPPORTED_CURRENCIES: [&str; 5] = ["GBP", "USD", "EUR", "NGN", "CAD"];
 
 #[derive(Serialize, Debug)]
 pub struct Account {
@@ -38,11 +39,17 @@ impl AccountName {
 
 impl Currency {
     pub fn parse(s: &str) -> Result<Self, AccountError> {
-        if s.len() == 3 && s.bytes().all(|b| b.is_ascii_alphabetic()) {
-            Ok(Currency(s.to_ascii_uppercase()))
-        } else {
-            Err(AccountError::InvalidCurrency(s.to_string()))
+        if s.len() != 3 || !s.bytes().all(|b| b.is_ascii_alphabetic()) {
+            return Err(AccountError::InvalidCurrency(s.to_string()));
         }
+
+        let upper = s.to_ascii_uppercase();
+
+        if !SUPPORTED_CURRENCIES.contains(&upper.as_str()) {
+            return Err(AccountError::UnsupportedCurrency(upper));
+        }
+
+        Ok(Currency(upper))
     }
 
     pub fn as_str(&self) -> &str {
@@ -87,8 +94,21 @@ mod tests {
     }
 
     #[test]
+    fn reject_unsupported_currency() {
+        for bad in ["AUD", "CZK", "aud", "DKK", "sek"] {
+            assert!(
+                matches!(
+                    Currency::parse(bad),
+                    Err(AccountError::UnsupportedCurrency(_))
+                ),
+                "expected {bad:?} to be rejected"
+            );
+        }
+    }
+
+    #[test]
     fn accepts_and_uppercases_valid_currencies() {
-        for good in ["GBP", "gbp", "AUD", "ngn", "USD", "eur"] {
+        for good in ["GBP", "gbp", "cad", "ngn", "USD", "eur"] {
             let c = Currency::parse(good).unwrap();
             assert_eq!(c.as_str(), good.to_ascii_uppercase(), "for input {good:?}");
         }

@@ -1,4 +1,4 @@
-use super::model::MAX_NAME_LEN;
+use super::model::{MAX_NAME_LEN, SUPPORTED_CURRENCIES};
 use crate::error;
 use axum::{
     http::StatusCode,
@@ -18,6 +18,9 @@ pub enum AccountError {
     #[error("currency must be 3 letters, got {0:?}")]
     InvalidCurrency(String),
 
+    #[error("currency {0:?} not supported. supported currency: {SUPPORTED_CURRENCIES:?}")]
+    UnsupportedCurrency(String),
+
     #[error("database error: {0}")]
     Database(#[from] sqlx::Error),
 }
@@ -27,7 +30,8 @@ impl IntoResponse for AccountError {
         match self {
             AccountError::EmptyName
             | AccountError::InvalidCurrency(_)
-            | AccountError::NameTooLong => {
+            | AccountError::NameTooLong
+            | AccountError::UnsupportedCurrency(_) => {
                 error::json_error(StatusCode::BAD_REQUEST, self.to_string())
             }
             AccountError::Database(e) => {

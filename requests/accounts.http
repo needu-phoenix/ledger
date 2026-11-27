@@ -1,0 +1,25 @@
+# =================== Accounts ==============================
+
+@base = http://127.0.0.1:8080
+### Create Account: valid, default currency
+POST {{base}}/accounts
+Content-Type: application/json
+
+{"name": "Alice"}
+
+### Create account: missing Content-Type header
+POST {{base}}/accounts
+
+{"name": "Alice"}
+
+### Create account: invalid, currency length > 3
+POST {{base}}/accounts
+Content-Type: application/json
+
+{"name":"Bob","currency":"USDX"}
+
+### Create account: broken JSON
+POST {{base}}/accounts
+Content-Type: application/json
+
+{"name":

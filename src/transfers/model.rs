@@ -56,3 +56,31 @@ impl NewTransfer {
         self.amount.value()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn reject_non_positive_amounts() {
+        assert!(matches!(Money::parse(0), Err(TransferError::InvalidAmount)));
+        assert!(matches!(
+            Money::parse(-5),
+            Err(TransferError::InvalidAmount)
+        ));
+    }
+
+    #[test]
+    fn accepts_positive_amount() {
+        assert!(matches!(Money::parse(1), Ok(Money(1))));
+        assert_eq!(Money::parse(1).unwrap().value(), 1);
+    }
+
+    #[test]
+    fn rejects_same_account() {
+        assert!(matches!(
+            NewTransfer::new(3, 3, 100),
+            Err(TransferError::SameAccount)
+        ))
+    }
+}

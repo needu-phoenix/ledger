@@ -34,10 +34,10 @@ impl IntoResponse for AccountError {
             AccountError::EmptyName
             | AccountError::InvalidCurrency(_)
             | AccountError::NameTooLong
-            | AccountError::UnsupportedCurrency(_)
-            | AccountError::NotFound => {
+            | AccountError::UnsupportedCurrency(_) => {
                 error::json_error(StatusCode::BAD_REQUEST, self.to_string())
             }
+            AccountError::NotFound => error::json_error(StatusCode::NOT_FOUND, self.to_string()),
             AccountError::Database(e) => {
                 error!(error = %e, "account database error");
                 error::json_error(StatusCode::INTERNAL_SERVER_ERROR, "internal server error")

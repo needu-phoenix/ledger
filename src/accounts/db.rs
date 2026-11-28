@@ -47,3 +47,4 @@ pub async fn balance(pool: &PgPool, id: i64) -> Result<Balance, AccountError> {
         currency: balance.currency,
     })
 }
+

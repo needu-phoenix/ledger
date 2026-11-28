@@ -15,6 +15,9 @@ pub enum AccountError {
     #[error("account name must be at most {MAX_NAME_LEN} characters")]
     NameTooLong,
 
+    #[error("account not found")]
+    NotFound,
+
     #[error("currency must be 3 letters, got {0:?}")]
     InvalidCurrency(String),
 
@@ -31,7 +34,8 @@ impl IntoResponse for AccountError {
             AccountError::EmptyName
             | AccountError::InvalidCurrency(_)
             | AccountError::NameTooLong
-            | AccountError::UnsupportedCurrency(_) => {
+            | AccountError::UnsupportedCurrency(_)
+            | AccountError::NotFound => {
                 error::json_error(StatusCode::BAD_REQUEST, self.to_string())
             }
             AccountError::Database(e) => {

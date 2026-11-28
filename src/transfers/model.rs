@@ -10,13 +10,6 @@ pub struct NewTransfer {
 }
 
 #[derive(Serialize)]
-pub struct Balance {
-    pub account_id: i64,
-    pub balance: i64,
-    pub currency: String,
-}
-
-#[derive(Serialize)]
 pub struct Transfer {
     pub transaction_id: i64,
     pub from_account_id: i64,

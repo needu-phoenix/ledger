@@ -14,6 +14,13 @@ pub struct Account {
     pub created_at: DateTime<Utc>,
 }
 
+#[derive(Serialize)]
+pub struct Balance {
+    pub account_id: i64,
+    pub balance: i64,
+    pub currency: String,
+}
+
 pub struct AccountName(String);
 pub struct Currency(String);
 

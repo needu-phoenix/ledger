@@ -8,19 +8,19 @@ use tracing::error;
 
 #[derive(Error, Debug)]
 pub enum TransferError {
-    #[error("amount must be >= 0.0")]
+    #[error("amount must be a positive whole number of pence")]
     InvalidAmount,
 
     #[error("from account same as to account")]
     SameAccount,
 
-    #[error("account doesn't exists")]
+    #[error("account not found")]
     AccountNotFound,
 
     #[error("accounts' currencies differ")]
     CurrencyMismatch,
 
-    #[error("")]
+    #[error("insufficient funds")]
     InsufficientFunds,
 
     #[error("database error: {0}")]
@@ -43,7 +43,7 @@ impl IntoResponse for TransferError {
                 error::json_error(StatusCode::UNPROCESSABLE_ENTITY, self.to_string())
             }
             TransferError::Database(e) => {
-                error!(error = %e, "account database error");
+                error!(error = %e, "transfer database error");
                 error::json_error(StatusCode::INTERNAL_SERVER_ERROR, "internal server error")
             }
         }

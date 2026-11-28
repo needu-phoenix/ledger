@@ -1,14 +1,10 @@
 use super::{
     db,
     error::TransferError,
-    model::{Balance, NewTransfer, Transfer},
+    model::{NewTransfer, Transfer},
 };
 use crate::app::AppState;
-use axum::{
-    Json,
-    extract::{Path, State},
-    http::StatusCode,
-};
+use axum::{Json, extract::State, http::StatusCode};
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -28,13 +24,4 @@ pub async fn create_transfer(
     let transfer = db::transfer(&state.pool, &t).await?;
 
     Ok((StatusCode::CREATED, Json(transfer)))
-}
-
-pub async fn get_balance(
-    State(s): State<AppState>,
-    Path(id): Path<i64>,
-) -> Result<(StatusCode, Json<Balance>), TransferError> {
-    let balance = db::balance(&s.pool, id).await?;
-
-    Ok((StatusCode::OK, Json(balance)))
 }

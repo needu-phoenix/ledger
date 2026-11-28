@@ -2,7 +2,6 @@ use super::{
     error::TransferError,
     model::{NewTransfer, Transfer},
 };
-use crate::transfers::model::Balance;
 use sqlx::PgPool;
 
 pub async fn transfer(pool: &PgPool, t: &NewTransfer) -> Result<Transfer, TransferError> {
@@ -83,28 +82,5 @@ pub async fn transfer(pool: &PgPool, t: &NewTransfer) -> Result<Transfer, Transf
         amount: t.amount(),
         currency: sender.currency.clone(),
         created_at: transaction.created_at,
-    })
-}
-
-pub async fn balance(pool: &PgPool, id: i64) -> Result<Balance, TransferError> {
-    let balance = sqlx::query!(
-        r#"
-            SELECT a.id AS account_id, a.currency, COALESCE(SUM(e.amount), 0)::BIGINT AS "balance!"
-            FROM accounts a 
-            LEFT JOIN entries e 
-            ON e.account_id = a.id
-            WHERE a.id = $1
-            GROUP BY a.id, a.currency
-        "#,
-        id
-    )
-    .fetch_optional(pool)
-    .await?
-    .ok_or(TransferError::AccountNotFound)?;
-
-    Ok(Balance {
-        account_id: balance.account_id,
-        balance: balance.balance,
-        currency: balance.currency,
     })
 }

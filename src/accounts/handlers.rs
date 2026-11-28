@@ -2,11 +2,15 @@ use crate::{
     accounts::{
         db,
         error::AccountError,
-        model::{Account, AccountName, Currency},
+        model::{Account, AccountName, Balance, Currency},
     },
     app::AppState,
 };
-use axum::{Json, extract::State, http::StatusCode};
+use axum::{
+    Json,
+    extract::{Path, State},
+    http::StatusCode,
+};
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
@@ -29,4 +33,13 @@ pub async fn create_account(
     let account = db::create(&state.pool, &name, &currency).await?;
 
     Ok((StatusCode::CREATED, Json(account)))
+}
+
+pub async fn get_balance(
+    State(s): State<AppState>,
+    Path(id): Path<i64>,
+) -> Result<(StatusCode, Json<Balance>), AccountError> {
+    let balance = db::balance(&s.pool, id).await?;
+
+    Ok((StatusCode::OK, Json(balance)))
 }

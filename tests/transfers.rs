@@ -187,3 +187,20 @@ async fn ledger_always_sum_to_zero(pool: PgPool) {
 
     assert_eq!(ledger_balance(&pool).await, 0)
 }
+
+#[sqlx::test]
+
+async fn can_send_entire_balance_but_not_a_penny_more(pool: PgPool) {
+    let gbp = settlement(&pool, "GBP").await;
+    let alice = new_account(&pool, "Alice", "GBP").await;
+    let bob = new_account(&pool, "Bob", "GBP").await;
+    send(&pool, gbp, alice, 1_000).await.unwrap();
+
+    // one penny more than she has: rejected
+    let t = send(&pool, alice, bob, 1_001).await;
+    assert!(matches!(t, Err(TransferError::InsufficientFunds)));
+
+    // exactly what she has: allowed, leaving her at 0
+    send(&pool, alice, bob, 1_000).await.unwrap();
+    assert_eq!(balance(&pool, alice).await, 0);
+}
